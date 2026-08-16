@@ -18,42 +18,31 @@ pnpm build      # typecheck + production bundle
 pnpm preview    # serve the built `dist/`
 ```
 
-Requires Node.js and [pnpm](https://pnpm.io). No API keys.
+Requires Node.js and [pnpm](https://pnpm.io).
 
 ### Keys
 
-| Input | Action |
-|---|---|
-| Arrows / WASD | Walk |
-| Space / E / Z | Interact, confirm a verb, advance text |
-| Up / Down | Pick a verb |
-| Esc | Close the verb menu |
-| Enter | Start from the title; continue ending / credits |
+| Input         | Action                                          |
+| ------------- | ----------------------------------------------- |
+| Arrows / WASD | Walk                                            |
+| Space / E / Z | Interact, confirm a verb, advance text          |
+| Up / Down     | Pick a verb                                     |
+| Esc           | Close the verb menu                             |
+| Enter         | Start from the title; continue ending / credits |
 
 ## Design
 
-You play a house dog in first person (canine). The map is small on purpose: living room, kitchen, bedroom. Furniture is interactable; each object has **2–3 authored verbs** (couch is Hide / Nap / Chew — the vacuum is not). The joke is the choice, then a short punchline.
+You walk a three-room house - living room, kitchen, bedroom — in first person canine form. Furniture is interactable. Each object has two or three actions associated with it that affect your stats.
 
-Three meters:
+You have three stats that sit on the top bar: Chaos (0–100), Good Boy (0–100, Treats (0–25).
 
-- **Chaos** 0–100
-- **Good Boy** 0–100
-- **Treats** 0–25
+Endings fire when a meter hits a wall worth stopping for:
 
-Verbs move those meters. The menu does not spoil the numbers; the punchline and HUD do.
-
-**Endings** fire when a meter hits a wall that is worth stopping for:
-
-- Chaos 100 — the house has fallen
-- Chaos 0 — nothing is happening, on purpose
-- Good Boy 100 — certificates, theoretically
-- Treats 25 — the hoard
-
-Good Boy at 0 does **not** end the run. Messy verbs dump reputation fast; ending there would hide Chaos max and the treat hoard.
-
-At **Chaos 50+** the vacuum hunts. Five hearts appear. Contact costs a heart (with invincibility blink). Zero hearts is **THE BEAST EATS**. Drop Chaos under 50 and it is just an appliance again; crossing 50 again restores five hearts.
-
-After any ending splash: credits (**Built by Shwetha for the Weekend Challenge: Dog Days Edition**), then the title.
+MAXIMUM CHAOS — the house has fallen
+ZERO CHAOS — nothing is happening. on purpose.
+GOOD BOY LEVEL MAX — certificates, theoretically
+TREAT HOARD — twenty-five, and not one fewer
+THE BEAST EATS — you were fur. it was enough.
 
 ## Architecture
 
