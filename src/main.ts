@@ -77,7 +77,7 @@ k.scene("title", () => {
     }),
     k.color(244, 234, 212),
     k.anchor("center"),
-    k.pos(k.center().x, 150),
+    k.pos(k.center().x, 130),
   ]);
   k.add([
     k.text("you live here. it does not.", {
@@ -86,13 +86,19 @@ k.scene("title", () => {
     }),
     k.color(196, 92, 74),
     k.anchor("center"),
-    k.pos(k.center().x, 190),
+    k.pos(k.center().x, 168),
+  ]);
+  k.add([
+    k.sprite("dog"),
+    k.anchor("center"),
+    k.pos(k.center().x - 80, 258),
+    k.scale(2),
   ]);
   k.add([
     k.sprite("vacuum"),
     k.anchor("center"),
-    k.pos(k.center().x, 250),
-    k.scale(2),
+    k.pos(k.center().x + 80, 268),
+    k.scale(3),
   ]);
   k.add([
     k.text(
@@ -106,7 +112,7 @@ k.scene("title", () => {
     ),
     k.color(180, 160, 130),
     k.anchor("center"),
-    k.pos(k.center().x, 360),
+    k.pos(k.center().x, 390),
   ]);
 
   k.onButtonPress("interact", () => startGame());
@@ -308,7 +314,7 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
     k.sprite("dog", { anim: "walk-down" }),
     k.pos(start.x, start.y),
     k.anchor("center"),
-    k.area({ scale: 0.55 }),
+    k.area({ scale: 0.42 }),
     k.body(),
     k.opacity(1),
     k.z(start.y),

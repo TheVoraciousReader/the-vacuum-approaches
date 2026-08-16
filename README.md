@@ -30,11 +30,13 @@ Requires Node.js and [pnpm](https://pnpm.io).
 | Esc           | Close the verb menu                             |
 | Enter         | Start from the title; continue ending / credits |
 
+Built for a keyboard and a larger screen. Phones get a warning; you can dismiss it and squeeze in anyway.
+
 ## Design
 
 You walk a three-room house - living room, kitchen, bedroom — in first person canine form. Furniture is interactable. Each object has two or three actions associated with it that affect your stats.
 
-You have three stats that sit on the top bar: Chaos (0–100), Good Boy (0–100, Treats (0–25).
+You have three stats that sit on the top bar: Chaos (0–100), Good Boy (0–100), Treats (0–25).
 
 Endings fire when a meter hits a wall worth stopping for:
 

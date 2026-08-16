@@ -1,25 +1,134 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Vacuum Approaches</title>
-    <style>
-      html,
-      body {
-        margin: 0;
-        height: 100%;
-        background: #120e0c;
-        overflow: hidden;
-      }
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
-  </head>
-  <body>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>%SITE_TITLE%</title>
+  <meta name="description" content="%SITE_DESCRIPTION%" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="%SITE_URL%/" data-seo-absolute />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="%SITE_URL%/" data-seo-absolute />
+  <meta property="og:title" content="%SITE_TITLE%" />
+  <meta property="og:description" content="%SITE_DESCRIPTION%" />
+  <meta property="og:image" content="/og-image.png" data-seo-relative />
+  <meta property="og:image" content="%SITE_URL%/og-image.png" data-seo-absolute />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="%SITE_TITLE% — you are the dog" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="%SITE_TITLE%" />
+  <meta name="twitter:description" content="%SITE_DESCRIPTION%" />
+  <meta name="twitter:image" content="/og-image.png" data-seo-relative />
+  <meta name="twitter:image" content="%SITE_URL%/og-image.png" data-seo-absolute />
+  <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      background: #120e0c;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screen-note {
+      width: min(22rem, calc(100vw - 2rem));
+      margin: auto;
+      padding: 1.5rem;
+      background: #1a1410;
+      color: #e8d5a3;
+      border: 2px solid #d4a017;
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    }
+
+    .screen-note::backdrop {
+      background: rgb(18 14 12 / 88%);
+    }
+
+    .screen-note__kicker {
+      margin: 0 0 0.75rem;
+      color: #d4a017;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .screen-note h2 {
+      margin: 0 0 0.75rem;
+      color: #f4ead4;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .screen-note p {
+      margin: 0 0 1.25rem;
+      color: #b4a082;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .screen-note button {
+      display: inline-block;
+      padding: 0.6rem 0.9rem;
+      background: #c45c4a;
+      color: #f4ead4;
+      border: 2px solid #1a1410;
+      font: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .screen-note button:hover,
+    .screen-note button:focus-visible {
+      background: #d4a017;
+      color: #1a1410;
+      outline: 2px solid #f4ead4;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id="screen-note" class="screen-note" aria-labelledby="screen-note-title" aria-describedby="screen-note-copy">
+    <p class="screen-note__kicker">The Vacuum Approaches</p>
+    <h2 id="screen-note-title">Best on a larger screen</h2>
+    <p id="screen-note-copy">
+      This is an experience best served by a keyboard — arrows to walk, verbs to cause trouble. Phones
+      make the rooms a squeeze.
+    </p>
+    <form method="dialog">
+      <button value="play">Go inside anyway</button>
+    </form>
+  </dialog>
+  <script>
+    (() => {
+      const dialog = document.getElementById("screen-note");
+      if (!(dialog instanceof HTMLDialogElement)) return;
+      const tight = window.matchMedia(
+        "(max-width: 800px), (max-height: 560px), (hover: none) and (pointer: coarse)",
+      );
+      const key = "tva-screen-note";
+      const openIfNeeded = () => {
+        if (sessionStorage.getItem(key) === "1") return;
+        if (!tight.matches) return;
+        if (!dialog.open) dialog.showModal();
+      };
+      dialog.addEventListener("close", () => {
+        sessionStorage.setItem(key, "1");
+      });
+      openIfNeeded();
+      tight.addEventListener("change", openIfNeeded);
+    })();
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
