@@ -1,5 +1,6 @@
 import type { KAPLAYCtx, GameObj, PosComp } from "kaplay";
 import type { Verb } from "./actions";
+import { isMuted, onMuteChange, toggleMute } from "./audio";
 import { getGoodBoyLevel, getHearts, getStats, isVacuumLethal, MAX_HEARTS } from "./stats";
 
 const HUD_Z = 200;
@@ -280,4 +281,46 @@ export function createPrompt(k: KAPLAYCtx) {
       label.hidden = true;
     },
   };
+}
+
+const MUTE_ON = "SOUND ON";
+const MUTE_OFF = "SOUND OFF";
+
+let soundToggleMade = false;
+
+/** Stays across scenes. Click or press M. Default is on. */
+export function createSoundToggle(k: KAPLAYCtx) {
+  if (soundToggleMade) return;
+  soundToggleMade = true;
+  const onColor = k.rgb(180, 160, 130);
+  const offColor = k.rgb(110, 96, 80);
+  const hoverColor = k.rgb(244, 234, 212);
+
+  const label = k.add([
+    k.text(MUTE_ON, { size: 10, font: "monospace" }),
+    k.pos(k.width() - 12, 10),
+    k.anchor("topright"),
+    k.color(onColor),
+    k.area(),
+    k.fixed(),
+    k.stay(),
+    k.z(400),
+  ]);
+
+  function paint(hovering: boolean) {
+    label.text = isMuted() ? MUTE_OFF : MUTE_ON;
+    label.color = hovering ? hoverColor : isMuted() ? offColor : onColor;
+  }
+
+  let hovering = false;
+  label.onHover(() => {
+    hovering = true;
+    paint(true);
+  });
+  label.onHoverEnd(() => {
+    hovering = false;
+    paint(false);
+  });
+  label.onClick(() => toggleMute(k));
+  onMuteChange(() => paint(hovering));
 }

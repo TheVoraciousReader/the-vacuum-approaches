@@ -28,6 +28,7 @@ Requires Node.js and [pnpm](https://pnpm.io).
 | Space / E / Z | Interact, confirm a verb, advance text          |
 | Up / Down     | Pick a verb                                     |
 | Esc           | Close the verb menu                             |
+| M             | Sound on/off (on by default)                    |
 | Enter         | Start from the title; continue ending / credits |
 
 Built for a keyboard and a larger screen. Phones get a warning; you can dismiss it and squeeze in anyway.
@@ -55,11 +56,12 @@ src/
   main.ts       Scenes (title, house, ending, credits), input, vacuum combat
   rooms.ts      Tile maps, furniture placement, doors, spawns
   sprites.ts    Pixel-art sheets generated to data URLs
-  actions.ts    Authored verbs + stat deltas per object
+  actions.ts    Authored actions + stat deltas per object
   narrator.ts   Punchlines keyed by object:verb
   stats.ts      Chaos / Treats / Good Boy, hearts, lethal threshold
   endings.ts    Splash copy + which meter crossing ends the run
-  ui.ts         HUD, verb menu, dialogue box
+  audio.ts      CC0 SFX families, mute (on by default)
+  ui.ts         HUD, verb menu, dialogue box, sound toggle
 ```
 
 **Loop:** walk → Space near an object → pick a verb → `narrate()` applies the delta and returns text → HUD updates → `detectEnding()` may queue a splash after the line is dismissed.

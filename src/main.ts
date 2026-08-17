@@ -13,10 +13,13 @@ import {
 import { getStats, isVacuumLethal, resetStats, takeHeart } from "./stats";
 import { detectEnding, endings, type EndingId } from "./endings";
 import { spriteUrls } from "./sprites";
-import { createDialogue, createHud, createPrompt } from "./ui";
+import { loadSounds, playSfx, playVerbSfx, toggleMute } from "./audio";
+import { createDialogue, createHud, createPrompt, createSoundToggle } from "./ui";
 
 const SPEED = 110;
 const INTERACT_RANGE = 42;
+const VACUUM_RANGE = 64;
+const STEP_INTERVAL = 0.28;
 
 const k = kaplay({
   width: 640,
@@ -48,6 +51,8 @@ k.loadSprite("vacuum", spriteUrls.vacuum);
 k.loadSprite("treat", spriteUrls.treat);
 k.loadSprite("heart", spriteUrls.heart);
 k.loadSprite("heartEmpty", spriteUrls.heartEmpty);
+loadSounds(k);
+
 k.loadSprite("dog", spriteUrls.dog, {
   sliceX: 2,
   sliceY: 4,
@@ -102,7 +107,7 @@ k.scene("title", () => {
   ]);
   k.add([
     k.text(
-      "ARROWS / WASD  walk\nSPACE  interact  ·  UP/DOWN  pick a verb\nCHAOS 50+  the vacuum hunts  ·  five hearts\n\nENTER to go inside",
+      "ARROWS / WASD  walk\nSPACE  interact  ·  UP/DOWN  pick a verb\nCHAOS 50+  the vacuum hunts  ·  five hearts\nM  sound on/off  ·  ENTER to go inside",
       {
         size: 14,
         font: "monospace",
@@ -183,7 +188,7 @@ k.scene("credits", () => {
     }),
     k.color(244, 234, 212),
     k.anchor("center"),
-    k.pos(k.center().x, 140),
+    k.pos(k.center().x, 88),
   ]);
   k.add([
     k.text(
@@ -197,7 +202,30 @@ k.scene("credits", () => {
     ),
     k.color(212, 160, 23),
     k.anchor("center"),
+    k.pos(k.center().x, 168),
+  ]);
+  k.add([
+    k.text("SOUNDS  ·  CC0", {
+      size: 12,
+      font: "monospace",
+    }),
+    k.color(244, 234, 212),
+    k.anchor("center"),
     k.pos(k.center().x, 250),
+  ]);
+  k.add([
+    k.text(
+      "Kenney  ·  Impact Sounds\nrubberduck  ·  80 CC0 Creature SFX\nJoseph Sardin / BigSoundBank  ·  vacuum",
+      {
+        size: 13,
+        font: "monospace",
+        align: "center",
+        lineSpacing: 8,
+      },
+    ),
+    k.color(180, 160, 130),
+    k.anchor("center"),
+    k.pos(k.center().x, 308),
   ]);
   k.add([
     k.text("you live here. it does not.", {
@@ -206,7 +234,7 @@ k.scene("credits", () => {
     }),
     k.color(180, 160, 130),
     k.anchor("center"),
-    k.pos(k.center().x, 340),
+    k.pos(k.center().x, 380),
   ]);
   k.add([
     k.text("SPACE / ENTER  ·  title", {
@@ -324,6 +352,9 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
   player.frame = idleFrame.down;
 
   let invulnUntil = 0;
+  let walking = false;
+  let stepAcc = STEP_INTERVAL;
+  let nearVacuum = false;
 
   player.onCollide("beast", () => {
     if (dialog.isOpen || changingRoom) return;
@@ -356,8 +387,17 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
     } else {
       player.opacity = 1;
     }
+
+    if (vacuum) {
+      const close = player.pos.dist(vacuum.pos) < VACUUM_RANGE;
+      if (close && !nearVacuum) playSfx(k, "vacuum");
+      nearVacuum = close;
+    }
+
     if (dialog.isOpen) {
       prompt.hide();
+      walking = false;
+      stepAcc = STEP_INTERVAL;
       return;
     }
 
@@ -367,7 +407,8 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
     if (k.isKeyDown("up") || k.isKeyDown("w")) dir.y -= 1;
     if (k.isKeyDown("down") || k.isKeyDown("s")) dir.y += 1;
 
-    if (dir.x !== 0 || dir.y !== 0) {
+    const moving = dir.x !== 0 || dir.y !== 0;
+    if (moving) {
       const moved = dir.unit().scale(SPEED);
       player.move(moved.x, moved.y);
       facing =
@@ -380,10 +421,22 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
             : "down";
       const anim = `walk-${facing}`;
       if (player.getCurAnim()?.name !== anim) player.play(anim);
+      if (!walking) {
+        playSfx(k, "step");
+        stepAcc = 0;
+      } else {
+        stepAcc += k.dt();
+        if (stepAcc >= STEP_INTERVAL) {
+          stepAcc -= STEP_INTERVAL;
+          playSfx(k, "step");
+        }
+      }
     } else {
       player.stop();
       player.frame = idleFrame[facing];
+      stepAcc = STEP_INTERVAL;
     }
+    walking = moving;
 
     const near = closestInteractable(player);
     if (near) prompt.showAt(near, near.objectName);
@@ -405,6 +458,7 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
         },
         verb,
       );
+      playVerbSfx(k, verb.id);
       hud.refresh();
       const endingId = detectEnding(before, getStats());
       dialog.play(result, () => {
@@ -435,4 +489,8 @@ k.scene("house", (opts: { room: RoomId; spawn: SpawnId }) => {
   }
 });
 
-k.onLoad(() => k.go("title"));
+k.onKeyPress("m", () => toggleMute(k));
+k.onLoad(() => {
+  createSoundToggle(k);
+  k.go("title");
+});
